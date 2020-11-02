@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="44a374d7-aa79-4bd1-8f23-2b8fd829b03f" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="showPreview" value="true" />
+  </component>
+  <component name="ProjectId" id="1jb7dad0jhcQhZ8KvwJG9dI0ne3" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Sketch.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/../GraphSlicer/Sketch.js" working-dir="$PROJECT_DIR$/../GraphSlicer">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.Sketch.js" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="44a374d7-aa79-4bd1-8f23-2b8fd829b03f" name="Default Changelist" comment="" />
+      <created>1604061043965</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1604061043965</updated>
+      <workItem from="1604061048871" duration="9654000" />
+      <workItem from="1604082564289" duration="7561000" />
+      <workItem from="1604133355848" duration="22231000" />
+      <workItem from="1604264319212" duration="12293000" />
+      <workItem from="1604278167700" duration="1715000" />
+      <workItem from="1604280536739" duration="1977000" />
+      <workItem from="1604310265264" duration="13866000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="182" y="217" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604068893923">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="182" y="217" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1604068893923" />
+    <state width="1515" height="217" key="GridCell.Tab.0.bottom" timestamp="1604237067098">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="217" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1604237067098" />
+    <state width="1515" height="217" key="GridCell.Tab.0.center" timestamp="1604237067098">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="217" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1604237067098" />
+    <state width="1515" height="217" key="GridCell.Tab.0.left" timestamp="1604237067097">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="217" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1604237067097" />
+    <state width="1515" height="217" key="GridCell.Tab.0.right" timestamp="1604237067098">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="217" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1604237067098" />
+  </component>
+</project>
