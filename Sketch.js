@@ -1,17 +1,15 @@
 // ИНИЦИАЛИЗАЦИЯ ПЕРЕМЕННЫХ
-// Параметры колец
-let circRad = 300; // Радиус кольца вершин исходного графа
-
 // Параметры графов
-let graph = []; // Граф, как массив вершин
-let vertNum = 25; // Кол-во вершин
+let graphRad = 300; // Радиус исходного графа
+let subGraphRad = 150; // Радиус подграфов
+let vertNum = 25; // Кол-во вершин исходного графа
 let vertRad = 40; // Радиус вершин
 let vertAng = 2 * Math.PI / vertNum; // Угол между вершинами
 
 // Параметры страниц
 let pages = []; // Массив страниц
 let vertPerPage = 10; // Макс. кол-во вершин на странице
-let pagesNum;
+let pagesNum; // Кол-во страниц
 
 // Исходные данные
 let scrAdjList; // Список инцедентных вершин
@@ -23,25 +21,27 @@ function setup() {
     pagesNum = Math.floor(vertNum / vertPerPage) +
         Math.floor(vertNum / vertPerPage - Math.floor(vertNum / vertPerPage) + 1 - 1e-5);
 
+    pages.push(new Page(windowWidth / 2, windowHeight / 2, graphRad));
+
     // Чтение графа из файла
     fetch('AdjList')
         .then(response => response.text())
         .then(text => {
             scrAdjList = text.split('\n').map(str => str.split(' ').map(ch => parseInt(ch)))
 
-
-
             // Инициализация графа
             for (let i = 0; i < vertNum; i++) {
-                graph.push(new Vert(i,scrAdjList[i]));
+                pages[0].graph.push(new Vert(i,scrAdjList[i]));
             }
 
             // Разрезание графа
-            for (let i = 0; i < pagesNum; i++) {
+            for (let i = 1; i < pagesNum; i++) {
+                while (pages[i] < pagesNum) {
 
+                }
             }
 
-            //console.log(graph)
+            console.log(pages[0].adjMatrix());
         })
 
     // Общие параметры отрисовки
@@ -58,12 +58,12 @@ function draw() {
         for (let i = 0; i < vertNum; i++) {
             // Расчёт положений вершин
             let curAngle = vertAng * i;
-            graph[i].x = lerp(graph[i].x, circRad * Math.cos(curAngle), 0.1);
-            graph[i].y = lerp(graph[i].y, circRad * Math.sin(curAngle), 0.1);
+            pages[0].graph[i].x = lerp(pages[0].graph[i].x, pages[0].rad * Math.cos(curAngle), 0.1);
+            pages[0].graph[i].y = lerp(pages[0].graph[i].y, pages[0].rad * Math.sin(curAngle), 0.1);
 
             // Отрисовка вершин и рёбер
-            graph[i].drawEdges(graph);
-            graph[i].display(vertRad);
+            pages[0].graph[i].drawEdges(pages[0].graph);
+            pages[0].graph[i].display(vertRad);
         }
     }
 }
