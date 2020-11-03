@@ -1,67 +1,69 @@
-// Параметры холста
-let sizeX = 700 // Ширина экрана
-let sizeY = 750 // Высота экрана
+// ИНИЦИАЛИЗАЦИЯ ПЕРЕМЕННЫХ
 // Параметры колец
-let circRad = 300; // Радиус кольца вершин
-let circShift = 100; // Максимальное смещение между кольцами
-let circAngle = - Math.PI / 2; // Угол поворота кольца
-// Параметры вершин
-let verts = []; // Массив вершин
-let n = 25; // Кол-во вершин
-let angle = 2 * Math.PI / n; // Угол между вершинами
-let vertRad = 40; // Радиус вершин
-// Параметры графа
-let graph; // Граф
+let circRad = 300; // Радиус кольца вершин исходного графа
 
+// Параметры графов
+let graph = []; // Граф, как массив вершин
+let vertNum = 25; // Кол-во вершин
+let vertRad = 40; // Радиус вершин
+let vertAng = 2 * Math.PI / vertNum; // Угол между вершинами
+
+// Параметры страниц
+let pages = []; // Массив страниц
+let vertPerPage = 10; // Макс. кол-во вершин на странице
+let pagesNum;
+
+// Исходные данные
+let scrAdjList; // Список инцедентных вершин
+
+
+// ПРОГРАММА
 function setup() {
+    // Подсчёт кол-ва страниц
+    pagesNum = Math.floor(vertNum / vertPerPage) +
+        Math.floor(vertNum / vertPerPage - Math.floor(vertNum / vertPerPage) + 1 - 1e-5);
+
     // Чтение графа из файла
-    fetch('Graph')
+    fetch('AdjList')
         .then(response => response.text())
         .then(text => {
-            graph = text.split('\n').map(str => str.split(' ').map(ch => parseInt(ch)))
+            scrAdjList = text.split('\n').map(str => str.split(' ').map(ch => parseInt(ch)))
 
-            // Инициализация массива вершин
-            for (let i = 0; i < n; i++) {
-                verts.push(new Vert(i,graph[i]));
+
+
+            // Инициализация графа
+            for (let i = 0; i < vertNum; i++) {
+                graph.push(new Vert(i,scrAdjList[i]));
             }
-            console.log(verts)
+
+            // Разрезание графа
+            for (let i = 0; i < pagesNum; i++) {
+
+            }
+
+            //console.log(graph)
         })
 
     // Общие параметры отрисовки
-    createCanvas(sizeX, sizeY);
-    translate(sizeX / 2, sizeY / 2);
+    createCanvas(windowWidth, windowHeight);
     textSize(14);
     textAlign("center");
-
-    // Выравнивание колец
-    if (n % 2) circAngle += angle/2;
 }
 
 function draw() {
-    //angle = mouseX/3000;
-    if (graph) {
-        translate(sizeX / 2, sizeY / 2);
+    if (scrAdjList) {
+        translate(windowWidth / 2, windowHeight / 2);
         background(255);
 
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < vertNum; i++) {
             // Расчёт положений вершин
-            let curShift = circRad - Math.min(circShift, mouseY) * (i % 2);
-            let curAngle = angle * i + circAngle;
-            verts[i].x = lerp(verts[i].x, curShift * Math.cos(curAngle), 0.1);
-            verts[i].y = lerp(verts[i].y, curShift * Math.sin(curAngle), 0.1);
+            let curAngle = vertAng * i;
+            graph[i].x = lerp(graph[i].x, circRad * Math.cos(curAngle), 0.1);
+            graph[i].y = lerp(graph[i].y, circRad * Math.sin(curAngle), 0.1);
 
-            // Отрисовка рёбер
-            for (let target of verts[i].arr) {
-                drawArrow(
-                    createVector(verts[i].x, verts[i].y),
-                    createVector(verts[target].x - verts[i].x, verts[target].y - verts[i].y),
-                    'black'
-                )
-            }
-
-            // Отрисовка вершин
-            ellipse(verts[i].x, verts[i].y, vertRad, vertRad);
-            text(verts[i].ind, verts[i].x, verts[i].y + 5);
+            // Отрисовка вершин и рёбер
+            graph[i].drawEdges(graph);
+            graph[i].display(vertRad);
         }
     }
 }
