@@ -5,7 +5,7 @@ let vertRad = 40; // Радиус вершин
 
 // Параметры страниц
 let pages = []; // Массив страниц
-let vertPerPage = 10; // Макс. кол-во вершин на странице
+let vertPerPage = 9; // Макс. кол-во вершин на странице
 let pagesNum; // Кол-во страниц
 
 // Исходные данные
@@ -75,11 +75,7 @@ function setup() {
             // Граф оставшихся вершин (разность исходного графа и подграфов)
             let tempGraph = pages[0].graph;
 
-
-
-
-
-            // Проход по страницам -------------------------------------------------------------------------------------
+            // Проход по страницам
             for (let i = 1; i <= pagesNum; i++) {
                 // Задание вершины для начала построения из оставшейся части графа
                 let randInd = Math.floor(Math.random() * tempGraph.length);
@@ -91,71 +87,49 @@ function setup() {
                 // Счётчик внесённых вершин
                 while (pages[i].graph.length < vertPerPage && tempGraph.length > 0) {
                     let PrVertInd = -1; // Индекс приоритетной для внесения вершины.
-                    let maxCoef = 0; // Максимальный на данный момент коэф. связности среди adjVert
+                    let maxCoef = -1; // Максимальный на данный момент коэф. связности среди adjVert
                     let maxdPlus = 0;
                     let maxdMinus = 0;
-                    let passVerts = []; // Массив пройденных вершин (чтобы исключить возможность просмотра одной и той же вершины несколько раз)
 
-
-                    // Проход по вершинам текущего графа
-                    for (const vert of pages[i].graph) {
+                    // Движение по неотсоротированным вершинам
+                    for (const vert of tempGraph) {
                         let curCoef = 0; // Коэф. связности текущей вершины adjVert
+                        let dPlus = 0; // Кол-во смежных вершин с текущей сттраницы
+                        let dMinus = 0; // Кол-во нераспределённых смежных вершин
 
-                        // Проход по инцедентным вершинам (претендентам)
+                        // Расчёт кол-ва инцедентных вершин из текущего графа
                         for (const adjVert of vert.adjList) {
-                            // Проверка на то, была ли вершина уже рассмотрена и находится ли уже на странице
-                            if (passVerts.indexOf(adjVert) !== -1 || adjVert.isBelong) {
-                                continue;
-                            }
+                            if (pages[i].graph.indexOf(adjVert) !== -1)
+                                dPlus++;
+                            else
+                                dMinus++;
+                        }
 
-                            // Добавление в список рассмотренных вершин
-                            passVerts.push(adjVert);
 
-                            let dPlus = 0;
-                            let dMinus = 0;
+                        // Расчёт коэфициента связности
+                        curCoef = dPlus / (dPlus + dMinus);
 
-                            // Расчёт кол-ва инцедентных вершин из текущего графа
-                            for (const subAdjVert of adjVert.adjList) {
-                                if (pages[i].graph.indexOf(subAdjVert) !== -1)
-                                    dPlus++;
-                                else
-                                    dMinus++;
-                            }
-
-                            // Расчёт коэфициента связности
-                            curCoef = dPlus / (dPlus + dMinus);
-
-                            // Определение приоритетной вершины
-                            if (curCoef > maxCoef) {
-                                PrVertInd = adjVert.ind;
+                        // Определение приоритетной вершины
+                        if (curCoef > maxCoef) {
+                            PrVertInd = vert.ind;
+                            maxCoef = curCoef;
+                            maxdPlus = dPlus;
+                            maxdMinus = dMinus
+                        }
+                        else if (curCoef === maxCoef) {
+                            if (curCoef > 0.5 && dMinus > maxdMinus) {
+                                PrVertInd = vert.ind;
                                 maxCoef = curCoef;
                                 maxdPlus = dPlus;
-                                maxdMinus = dMinus
+                                maxdMinus = dMinus;
                             }
-                            else if (curCoef === maxCoef) {
-                                if (curCoef > 0.5 && dMinus > maxdMinus) {
-                                    PrVertInd = adjVert.ind;
-                                    maxCoef = curCoef;
-                                    maxdPlus = dPlus;
-                                    maxdMinus = dMinus;
-                                }
-                                if (curCoef < 0.5 && dMinus < maxdMinus) {
-                                    PrVertInd = adjVert.ind;
-                                    maxCoef = curCoef;
-                                    maxdPlus = dPlus;
-                                    maxdMinus = dMinus;
-                                }
-                            }
-                            else if (PrVertInd === -1){
-                                console.log("WTF");
+                            if (curCoef < 0.5 && dMinus < maxdMinus) {
+                                PrVertInd = vert.ind;
+                                maxCoef = curCoef;
+                                maxdPlus = dPlus;
+                                maxdMinus = dMinus;
                             }
                         }
-                    }
-
-                    // Костыль 2. если почему-то никакая вершина не подошла по условиям.
-                    if (PrVertInd === -1) {
-                        console.log("vershina ne podoshla");
-                        break;
                     }
 
                     // Добавление приоритетной вершины
@@ -166,15 +140,6 @@ function setup() {
                     // Удаление внесённой вершины из списка рассматриваемых вершин
                     tempGraph = tempGraph.filter(vert => vert.isBelong === false);
                 }
-            }
-            //----------------------------------------------------------------------------------------------------------
-
-            // Костыль 3. Если почему-то остались элементы то переносим их на 3 сраницу.
-            while (tempGraph.length > 0) {
-                console.log("delete")
-                let el = tempGraph.pop()
-                pages[pagesNum].graph.push(el);
-                el.pageInd = pagesNum;
             }
 
             // Подсчёт кол-ва рёбер между страницами.
@@ -205,7 +170,7 @@ function draw() {
         time++;
         background(255);
         pages[0].display();
-        if (time < 200) {
+        if (time < 100) {
             pages[0].recalculate();
         }
         else {
