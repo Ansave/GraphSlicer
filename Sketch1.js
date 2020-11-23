@@ -10,20 +10,20 @@ let pagesNum; // Кол-во страниц
 
 // Исходные данные
 let scrAdjList; // Список инцедентных вершин
-let isReady = false;
-let lineSum = 0;
+let isReady = false; // Флаг завершения основного расчёта
+let lineSum = 0; // Кол-во рёбер между страницами
 
 // Макросы размеров холста
-let WW;
-let WH;
+let WW; // Ширина экрана
+let WH; // Высота экрана
 
-let drawCounter = 0;
+let time = 0;
 
 // ПРОГРАММА
 function setup() {
     // Макросы размеров холста
-    WW = windowWidth;
-    WH = windowHeight;
+    WW = windowWidth; // Ширина экрана
+    WH = windowHeight; // Высота экрана
 
     // Основной Алгоритм
     fetch('AdjList')
@@ -33,75 +33,69 @@ function setup() {
             scrAdjList = text.split('\n').map(str => str.split(' ').map(ch => parseInt(ch)))
             let vertNum = scrAdjList.length;
 
+            // Чистка от NaN (образуется при пустом поле в AdjList)
+            for (let vert of scrAdjList) {
+                if (isNaN(vert[0])) {
+                    vert.pop()
+                }
+            }
+
             // Подсчёт кол-ва страниц
             pagesNum = Math.floor(vertNum / vertPerPage) +
                 Math.floor(vertNum / vertPerPage - Math.floor(vertNum / vertPerPage) + 1 - 1e-5);
 
             // Инициализация и заполнение исходной страницы
-            pages.push(new Page(WW / 2 - 550, WH / 2 - 100, graphRad));
-            console.log("Source Page after init", 0, pages[0].graph);
+            pages.push(new Page(WW / 2, WH / 2, graphRad));
+
             for (let i = 0; i < vertNum; i++) {
-                pages[0].graph.push(new Vert(i, scrAdjList[i]));
+                pages[0].graph.push(new Vert(i));
             }
 
-            // Костыль (избавление от NaN)
-            let kostN = pages[0].graph.length;
-            pages[0].graph[kostN - 1].arr.pop();
-
-            // Создание матрицы смежности
-            let matrix = pages[0].adjMatrix();
-
-            // Определение входящих и исходящих вершин для каждой вершины
-            for (const [ind, vert] of pages[0].graph.entries()) {
-                let j = ind;
-                for (let i = 0; i < vertNum; i++) {
-                    if (matrix[i][j]) {
-                        vert.inList.push(pages[0].graph[i]);
-                    }
-                    if (matrix[j][i]) {
-                        vert.outList.push(pages[0].graph[i]);
-                    }
+            // Определение входящих, исходящих и смежных вершин для каждой вершины
+            for (const [ind, row]  of scrAdjList.entries()) {
+                let curVert = pages[0].graph[ind]; // Текущая вершина
+                for (const outInd of row) {
+                    let outVert = pages[0].graph[outInd]; // Исходящая вершина
+                    // Рассмотрение текущей вершины
+                    curVert.outList.push(outVert); // Добавление исходящей вершины
+                    curVert.adjList.push(outVert); // Добавление смежной вершины
+                    // Рассмотрение выходящей вершины
+                    outVert.inList.push(curVert); // Добавление текущей вершины как входящей
+                    outVert.adjList.push(curVert); // Добавление текущей вершины как смежной
                 }
-                vert.adjList = vert.inList.concat(vert.outList);
             }
 
             // Инициализация подграфов
             for (let i = 1; i <= pagesNum; i++) {
-                //let x = i * 400 + 400;
                 let x = i * 400 - 200;
                 let y = WH * (0.25 + (i % 2) / 2) - 50;
                 pages.push(new Page(x, y, graphRad / pagesNum + 50));
-                //console.log("Page after init", i, pages[i].graph);
             }
-
 
             // Граф оставшихся вершин (разность исходного графа и подграфов)
             let tempGraph = pages[0].graph;
-            console.log(tempGraph.length)
 
-            // Проход по страницам
+
+
+
+
+            // Проход по страницам -------------------------------------------------------------------------------------
             for (let i = 1; i <= pagesNum; i++) {
                 // Задание вершины для начала построения из оставшейся части графа
-                // Костыль ещё один
-                //let randInd = 24;
-                //if (i !== 1) {
-                    let randInd = Math.floor(Math.random() * tempGraph.length);
-                //}
+                let randInd = Math.floor(Math.random() * tempGraph.length);
                 pages[i].graph.push(tempGraph[randInd]);
-
-                // Костыль
                 tempGraph[randInd].pageInd = i;
-
                 tempGraph[randInd].isBelong = true;
                 tempGraph = tempGraph.filter(vert => vert.isBelong === false);
 
                 // Счётчик внесённых вершин
                 while (pages[i].graph.length < vertPerPage && tempGraph.length > 0) {
                     let PrVertInd = -1; // Индекс приоритетной для внесения вершины.
-                    let passVerts = []; // Массив пройденных вершин (чтобы исключить возможность просмотра одной и той же вершины несколько раз)
                     let maxCoef = 0; // Максимальный на данный момент коэф. связности среди adjVert
                     let maxdPlus = 0;
                     let maxdMinus = 0;
+                    let passVerts = []; // Массив пройденных вершин (чтобы исключить возможность просмотра одной и той же вершины несколько раз)
+
 
                     // Проход по вершинам текущего графа
                     for (const vert of pages[i].graph) {
@@ -152,23 +146,28 @@ function setup() {
                                     maxdMinus = dMinus;
                                 }
                             }
+                            else if (PrVertInd === -1){
+                                console.log("WTF");
+                            }
                         }
                     }
 
-                    // Костыль 2. почему-то никакая вершина не подошла по условиям.
+                    // Костыль 2. если почему-то никакая вершина не подошла по условиям.
                     if (PrVertInd === -1) {
+                        console.log("vershina ne podoshla");
                         break;
                     }
 
                     // Добавление приоритетной вершины
                     pages[i].graph.push(pages[0].graph[PrVertInd]);
-                    // Помечаем вершину как занесённую
                     pages[0].graph[PrVertInd].isBelong = true;
                     pages[0].graph[PrVertInd].pageInd = i;
+
                     // Удаление внесённой вершины из списка рассматриваемых вершин
                     tempGraph = tempGraph.filter(vert => vert.isBelong === false);
                 }
             }
+            //----------------------------------------------------------------------------------------------------------
 
             // Костыль 3. Если почему-то остались элементы то переносим их на 3 сраницу.
             while (tempGraph.length > 0) {
@@ -178,15 +177,10 @@ function setup() {
                 el.pageInd = pagesNum;
             }
 
-            console.log(pages);
-            for (const page of pages) {
-                console.log(page.graph.map(item => item.ind))
-            }
-
+            // Подсчёт кол-ва рёбер между страницами.
             for (const vert of pages[0].graph) {
                 for (const outVert of vert.inList) {
                     if (vert.pageInd !== outVert.pageInd) {
-                        console.log(vert.ind, outVert.ind);
                         lineSum++;
                     }
                 }
@@ -208,18 +202,16 @@ function setup() {
 
 function draw() {
     if (isReady) {
-        drawCounter++;
+        time++;
         background(255);
         pages[0].display();
-        if (drawCounter < 300) {
+        if (time < 200) {
             pages[0].recalculate();
         }
         else {
             pages[1].recalculate();
             pages[2].recalculate();
             pages[3].recalculate();
-
         }
-        //text(lineSum, WW / 2, WH / 2);
     }
 }

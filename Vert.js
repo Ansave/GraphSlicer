@@ -1,14 +1,14 @@
 class Vert {
     x = 0;
     y = 0;
+    pageInd = 0; // Индекс страницы, к которой принадлежит вершина
+    isBelong = false; // Флаг, определяющий была ли уже внесена вершина на одну из страниц
     adjList = []; // Список всех смежных вершин
     inList = []; // Список смежных входящих вершин
     outList = []; // Список смежных выходящих вершин
-    pageInd = 0;
-    isBelong = false; // Флаг, определяющий была ли уже внесена вершина на одну из страниц
-    constructor(ind, arr) {
+
+    constructor(ind) {
         this.ind = ind;
-        this.arr = arr;
     }
 
     // Отрисовка вершины
@@ -19,10 +19,10 @@ class Vert {
 
     // Построение рёбер к инцедентным вершинам
     drawEdges (graph) {
-        for (let target of this.arr) {
+        for (let target of this.outList) {
             drawArrow(
                 createVector(this.x, this.y),
-                createVector(graph[target].x - this.x, graph[target].y - this.y),
+                createVector(target.x - this.x, target.y - this.y),
                 'black'
             )
         }
